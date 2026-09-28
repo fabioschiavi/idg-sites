@@ -718,10 +718,10 @@ function contactForm() {
       bad[0].focus();
       return;
     }
-    // TODO: enviar para o backend / CRM da IDG
+    // TODO: enviar para o backend / CRM da IDG. Enquanto não houver integração,
+    // o formulário não envia nada e avisa isso com clareza.
     msg.classList.remove("is-error");
-    msg.textContent = `Obrigado, ${nome.value.trim().split(" ")[0]}. A equipe comercial vai responder no e-mail informado.`;
-    form.reset();
+    msg.textContent = "Versão de demonstração: a mensagem não foi enviada. Fale com a IDG pelo (31) 3285-1661 ou pelo WhatsApp.";
   });
 }
 
