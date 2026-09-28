@@ -257,7 +257,7 @@ export function initPointCloud(canvas, { reducedMotion = false } = {}) {
     uniform vec2 uPointer;
     uniform vec3 uBlue, uHigh, uOrange;
     float bim() { return smoothstep(0.7, 1.0, uProgress); }
-    float scanOn() { return smoothstep(0.18, 0.3, uProgress) * (1.0 - bim()); }
+    float scanOn() { return smoothstep(0.18, 0.3, uProgress) * (1.0 - smoothstep(0.62, 0.74, uProgress)); }
     float scanX() {
       float p = clamp(uProgress, 0.0, 1.0);
       float sweep = fract(uTime * 0.07);
