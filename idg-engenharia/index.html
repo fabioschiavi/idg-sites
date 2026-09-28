@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IDG Engenharia e Consultoria — do projeto ao gerenciamento</title>
+  <meta name="description" content="Engenharia, consultoria e gerenciamento de empreendimentos há mais de 27 anos. Topografia, aerofotogrametria, escaneamento LS3D, BIM, geotecnia, EPC e EPCM em todo o Brasil." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23f59d00'/%3E%3Cg fill='none' stroke='%230a1230' stroke-width='3.2' stroke-linecap='round'%3E%3Cpath d='M25 12.5A10 10 0 1 0 26 18.5'/%3E%3Cpath d='M20.5 18h5.5v5.5'/%3E%3C/g%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Azeret+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script type="importmap">
+  { "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+  </script>
+</head>
+<body class="is-loading">
+  <!-- símbolo (versão simplificada; troque pelo SVG oficial do logo IDG) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="glyph" viewBox="0 0 32 32">
+      <g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round">
+        <path d="M25 12.5A10 10 0 1 0 26 18.5" />
+        <path d="M20.5 18h5.5v5.5" />
+      </g>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-out" viewBox="0 0 16 16"><path d="M5 11l6-6M6 5h5v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </svg>
+
+  <!-- PRELOADER -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader__center">
+      <svg class="loader__ring" viewBox="0 0 120 120">
+        <circle class="loader__track" cx="60" cy="60" r="54" />
+        <circle class="loader__arc" cx="60" cy="60" r="54" pathLength="100" />
+      </svg>
+      <div class="loader__mark" id="loaderMark"><svg><use href="#glyph" /></svg></div>
+    </div>
+    <div class="loader__count mono"><span id="loaderCount">0</span>%</div>
+  </div>
+
+  <canvas id="stream" aria-hidden="true"></canvas>
+  <div class="stream-fallback" aria-hidden="true"></div>
+
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <a class="brand" href="#inicio" aria-label="IDG Engenharia e Consultoria, início">
+        <span class="brand__mark" id="navMark"><svg><use href="#glyph" /></svg></span>
+        <span class="brand__name">IDG<small>engenharia e consultoria</small></span>
+      </a>
+      <nav class="nav__links" aria-label="Principal">
+        <a href="#quem-somos">Quem somos</a>
+        <a href="#solucoes">Soluções</a>
+        <a href="#segmentos">Segmentos</a>
+        <a href="#esg">ESG</a>
+        <a href="#radar">Radar IDG</a>
+        <a href="#carreiras">Carreiras</a>
+      </nav>
+      <div class="nav__right">
+        <a class="status-pill mono" href="#certificacoes"><i class="dot"></i>4 certificações ISO</a>
+        <a class="btn btn--accent btn--sm" href="#cotacao">Faça sua cotação</a>
+        <button class="nav__burger" id="burger" aria-label="Abrir menu" aria-expanded="false"><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero" id="inicio">
+      <div class="dotgrid" aria-hidden="true"></div>
+      <div class="wrap hero__grid">
+        <div class="hero__copy">
+          <p class="chip mono" data-intro><i class="sq"></i>engenharia e consultoria · +27 anos</p>
+          <h1 class="h-display" data-intro>Qual o seu <em>desafio?</em></h1>
+          <p class="lede" data-intro>Engenharia, consultoria e gerenciamento para transformar desafios em projetos bem-sucedidos, do primeiro levantamento à entrega da obra.</p>
+          <div class="hero__ctas" data-intro>
+            <a class="btn btn--accent" href="#cotacao">Faça sua cotação</a>
+            <a class="btn btn--ghost" href="#solucoes">Conheça as soluções<svg class="ico"><use href="#i-arrow" /></svg></a>
+          </div>
+          <p class="fine mono" data-intro>+1.000 colaboradores · presença em todo o Brasil</p>
+        </div>
+
+        <div class="hero__stage" data-intro>
+          <div class="win" id="heroWin">
+            <div class="win__bar">
+              <span class="win__title">Expansão · unidade 2</span>
+              <span class="win__meta mono">EPCM · 4 frentes</span>
+              <span class="win__state mono"><i class="dot"></i>em campo</span>
+            </div>
+            <div class="win__body">
+              <div class="win__rail" aria-hidden="true">
+                <span class="is-on"><svg viewBox="0 0 16 16"><path d="M4 2l8 6-4 1 2 4-1.6.8-2-4L4 12z" fill="currentColor"/></svg></span>
+                <span><svg viewBox="0 0 16 16"><path d="M2 12l4-7 3 4 2-2 3 5z" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></span>
+                <span><svg viewBox="0 0 16 16"><rect x="3" y="3" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M3 8h10M8 3v10" stroke="currentColor" stroke-width="1"/></svg></span>
+              </div>
+              <div class="flow" id="flow">
+                <svg class="flow__edges" viewBox="0 0 520 250" preserveAspectRatio="none" aria-hidden="true">
+                  <path id="e1" class="edge" d="M128 125 C 160 125, 160 125, 188 125" />
+                  <path id="e2" class="edge" d="M322 118 C 350 118, 350 58, 378 58" />
+                  <path id="e3" class="edge" d="M322 132 C 350 132, 350 192, 378 192" />
+                  <path class="edge-pulse" data-edge="e1" d="M128 125 C 160 125, 160 125, 188 125" />
+                  <path class="edge-pulse" data-edge="e2" d="M322 118 C 350 118, 350 58, 378 58" />
+                  <path class="edge-pulse" data-edge="e3" d="M322 132 C 350 132, 350 192, 378 192" />
+                </svg>
+                <span class="flow__label mono" style="left:66.5%;top:15%">conflito</span>
+                <span class="flow__label mono" style="left:66.5%;top:78%">ok</span>
+                <div class="node" data-node="n1" style="left:0%;top:36%"><b>Levantamento</b><small class="mono">LS3D + drone</small></div>
+                <div class="node node--cond" data-node="n2" style="left:36%;top:36%"><b>Clash BIM?</b><small class="mono">compatibilização</small></div>
+                <div class="node" data-node="n3" style="left:72.5%;top:9%"><b>Revisar projeto</b><small class="mono">engenharia</small></div>
+                <div class="node" data-node="n4" style="left:72.5%;top:63%"><b>Liberar frente</b><small class="mono">implantação</small></div>
+                <span class="flow__wait mono" style="left:74%;top:40%">⏱ revisão em 2 dias</span>
+                <span class="flow__zoom mono">100%</span>
+              </div>
+            </div>
+            <div class="win__runs">
+              <p class="mono label">últimos eventos</p>
+              <ul id="runs" class="mono">
+                <li><i class="dot"></i><span>07:42:10</span><span>voo de drone · frente 2</span><span>18 min</span></li>
+                <li><i class="dot"></i><span>07:31:55</span><span>nuvem de pontos LS3D</span><span>38 mi pts</span></li>
+                <li><i class="dot"></i><span>07:20:03</span><span>RDO frente 3 assinado</span><span>ok</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NÚMEROS -->
+    <section class="numbers" id="numeros" aria-label="IDG em números">
+      <div class="wrap numbers__grid">
+        <div class="num reveal"><p class="num__val">+<span class="count" data-to="27">0</span></p><p class="mono muted small">anos de mercado</p></div>
+        <div class="num reveal"><p class="num__val">+<span class="count" data-to="1000" data-sep>0</span></p><p class="mono muted small">colaboradores em 2026</p></div>
+        <div class="num reveal"><p class="num__val"><span class="count" data-to="8">0</span></p><p class="mono muted small">soluções integradas</p></div>
+        <div class="num reveal"><p class="num__val"><span class="count" data-to="4">0</span></p><p class="mono muted small">certificações ISO</p></div>
+        <div class="num reveal"><p class="num__val num__val--txt">América</p><p class="mono muted small">atendimento em todo o continente</p></div>
+      </div>
+    </section>
+
+    <!-- QUEM SOMOS -->
+    <section class="section" id="quem-somos">
+      <div class="wrap about">
+        <div class="about__head reveal">
+          <p class="chip mono"><i class="dot"></i>quem somos</p>
+          <h2 class="h-section">Engenharia, segurança e gestão, <em>do projeto ao gerenciamento.</em></h2>
+        </div>
+        <div class="about__body reveal">
+          <p class="about__lead">A IDG é uma empresa de engenharia e consultoria com mais de 27 anos de atuação, reconhecida por entregar soluções técnicas, seguras e estratégicas para os principais players da indústria.</p>
+          <p class="muted">Nossa equipe multidisciplinar, com mais de mil colaboradores em 2026, reúne especialistas em engenharia, segurança e gestão para acompanhar o seu empreendimento de ponta a ponta. As soluções são personalizadas, com foco em eficiência e performance operacional, padrões de qualidade certificados e indicadores de resultado.</p>
+          <ul class="ticks">
+            <li><svg><use href="#i-check" /></svg>Satisfação de clientes e partes interessadas</li>
+            <li><svg><use href="#i-check" /></svg>Capacitação contínua das equipes</li>
+            <li><svg><use href="#i-check" /></svg>Melhoria contínua dos processos</li>
+            <li><svg><use href="#i-check" /></svg>Responsabilidade social e compliance</li>
+          </ul>
+          <a class="link-arrow" href="https://www.youtube.com/@idgengenharia" target="_blank" rel="noopener">Assista ao vídeo institucional<svg><use href="#i-out" /></svg></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOLUÇÕES -->
+    <section class="section" id="solucoes">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <p class="chip mono"><i class="dot"></i>soluções</p>
+            <h2 class="h-section">Oito frentes de engenharia, <em>um só time.</em></h2>
+          </div>
+          <p class="head__aside">Contrate uma solução isolada ou o pacote completo. As equipes de campo, projeto e gestão trabalham sobre a mesma base de dados.</p>
+        </div>
+
+        <div class="svc reveal" id="svc">
+          <div class="svc__tabs" role="tablist" aria-label="Soluções IDG">
+            <button role="tab" id="t-eng" aria-controls="p-svc" aria-selected="true" data-svc="0"><span class="mono">ENG</span>Engenharia</button>
+            <button role="tab" id="t-aer" aria-controls="p-svc" aria-selected="false" tabindex="-1" data-svc="1"><span class="mono">AER</span>Levantamentos aerofotogramétricos</button>
+            <button role="tab" id="t-top" aria-controls="p-svc" aria-selected="false" tabindex="-1" data-svc="2"><span class="mono">TOP</span>Levantamentos topográficos</button>
+            <button role="tab" id="t-ger" aria-controls="p-svc" aria-selected="false" tabindex="-1" data-svc="3"><span class="mono">GER</span>Gerenciamento de empreendimentos</button>
+            <button role="tab" id="t-epc" aria-controls="p-svc" aria-selected="false" tabindex="-1" data-svc="4"><span class="mono">EPC</span>Fornecimento em regime EPC e EPCM</button>
+            <button role="tab" id="t-ls3d" aria-controls="p-svc" aria-selected="false" tabindex="-1" data-svc="5"><span class="mono">LS3D</span>Escaneamento com tecnologia LS3D</button>
+            <button role="tab" id="t-bim" aria-controls="p-svc" aria-selected="false" tabindex="-1" data-svc="6"><span class="mono">BIM</span>Implementação da tecnologia BIM</button>
+            <button role="tab" id="t-geo" aria-controls="p-svc" aria-selected="false" tabindex="-1" data-svc="7"><span class="mono">GEO</span>Geologia e geotecnia</button>
+          </div>
+          <div class="svc__panel card" id="p-svc" role="tabpanel" aria-labelledby="t-eng" tabindex="0">
+            <div class="svc__art" id="svcArt" aria-hidden="true"></div>
+            <div class="svc__content" id="svcContent">
+              <p class="mono label" id="svcCode">ENG · projeto e campo</p>
+              <h3 id="svcTitle">Engenharia</h3>
+              <p class="muted" id="svcDesc"></p>
+              <ul class="ticks ticks--two" id="svcList"></ul>
+              <div class="svc__phases mono" id="svcPhases"></div>
+              <a class="btn btn--accent btn--sm" href="#cotacao" id="svcCta">Solicitar proposta</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MÉTODO -->
+    <section class="section" id="metodo">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <p class="chip mono"><i class="dot"></i>como trabalhamos</p>
+            <h2 class="h-section">Do primeiro levantamento <em>à entrega da obra.</em></h2>
+          </div>
+          <p class="head__aside">Cada etapa alimenta a próxima. O que o drone e o laser medem vira modelo, o modelo vira cronograma e o cronograma é acompanhado em campo.</p>
+        </div>
+        <div class="method">
+          <ol class="steps">
+            <li class="reveal"><span class="mono">01</span><div><h3>Diagnóstico</h3><p class="muted">Entendemos o desafio, o escopo, os riscos e as restrições do empreendimento.</p></div></li>
+            <li class="reveal"><span class="mono">02</span><div><h3>Campo</h3><p class="muted">Topografia, aerofotogrametria, escaneamento LS3D e investigações geotécnicas.</p></div></li>
+            <li class="reveal"><span class="mono">03</span><div><h3>Engenharia</h3><p class="muted">Projeto multidisciplinar, modelagem e compatibilização em BIM.</p></div></li>
+            <li class="reveal"><span class="mono">04</span><div><h3>Implantação</h3><p class="muted">Gerenciamento, fiscalização, EPC ou EPCM e segurança em cada frente.</p></div></li>
+            <li class="reveal"><span class="mono">05</span><div><h3>Entrega</h3><p class="muted">Comissionamento, as-built e documentação pronta para a operação.</p></div></li>
+          </ol>
+          <div class="card trace reveal" id="trace">
+            <div class="trace__top mono"><span>cronograma integrado · <span id="traceId">semana 18</span></span><span class="muted">exemplo</span></div>
+            <div class="trace__rows">
+              <div class="trace__row"><span class="mono">diagnóstico</span><div class="bar"><i style="--l:0;--w:.12"></i></div><span class="mono ms">100%</span></div>
+              <div class="trace__row"><span class="mono">campo</span><div class="bar"><i style="--l:.08;--w:.26"></i></div><span class="mono ms">100%</span></div>
+              <div class="trace__row"><span class="mono">engenharia</span><div class="bar"><i style="--l:.24;--w:.34"></i></div><span class="mono ms">86%</span></div>
+              <div class="trace__row"><span class="mono">implantação</span><div class="bar"><i style="--l:.46;--w:.42"></i></div><span class="mono ms">41%</span></div>
+              <div class="trace__row"><span class="mono">entrega</span><div class="bar"><i style="--l:.86;--w:.14"></i></div><span class="mono ms">0%</span></div>
+              <span class="trace__today" aria-hidden="true"><i class="mono">hoje</i></span>
+            </div>
+            <div class="trace__axis mono"><span>jan</span><span>mar</span><span>mai</span><span>jul</span><span>set</span><span>nov</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TECNOLOGIA -->
+    <section class="section" id="tecnologia">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <p class="chip mono"><i class="dot"></i>tecnologia em campo</p>
+            <h2 class="h-section">Do laser ao modelo, <em>sem perder um milímetro.</em></h2>
+          </div>
+          <p class="head__aside">O escaneamento LS3D captura a instalação existente em nuvem de pontos. A nuvem vira modelo BIM, e o modelo antecipa conflitos antes que eles cheguem à obra.</p>
+        </div>
+        <div class="tech">
+          <div class="card pc reveal" id="pcCard">
+            <canvas id="pcCanvas" aria-label="Nuvem de pontos de uma planta industrial sendo escaneada e convertida em modelo BIM"></canvas>
+            <div class="pc__hud mono" aria-hidden="true">
+              <span><i class="dot"></i>scan LS3D</span>
+              <span id="pcStage">nuvem de pontos</span>
+            </div>
+            <div class="pc__fallback" aria-hidden="true"></div>
+          </div>
+          <div class="tech__side">
+            <div class="card chat reveal" id="chat">
+              <div class="chat__head mono"><span>#frente-3 · medições</span><span>hoje</span></div>
+              <div class="chat__body">
+                <div class="chat__typing" id="chatTyping"><i></i><i></i><i></i></div>
+                <div class="chat__msg" id="chatMsg">
+                  <span class="chat__avatar"><svg><use href="#glyph" /></svg></span>
+                  <div>
+                    <p class="chat__who">Painel IDG <small class="mono">09:42</small></p>
+                    <p>Medição 11 da frente 3 pronta: <b>86% do escopo</b> executado, RDOs conferidos.</p>
+                    <div class="chat__actions">
+                      <button class="chat__btn chat__btn--yes" id="chatYes" tabindex="-1">Aprovar medição</button>
+                      <button class="chat__btn" tabindex="-1">Pedir ajuste</button>
+                    </div>
+                    <p class="chat__done mono" id="chatDone">✓ aprovada pelo cliente · 09:44</p>
+                  </div>
+                </div>
+              </div>
+              <span class="cursor" id="chatCursor" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M2 1l11 7-5 1 3 5-2 1-3-5-4 3z" fill="#fff" stroke="#000" stroke-width=".8"/></svg></span>
+            </div>
+            <ul class="tech__list reveal">
+              <li><b>Drones</b><span class="muted">ortomosaicos, modelos de terreno e volumes em horas</span></li>
+              <li><b>Laser scanning</b><span class="muted">as-built de alta precisão em instalações em operação</span></li>
+              <li><b>BIM 4D e 5D</b><span class="muted">modelo ligado ao cronograma e aos quantitativos</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLACA: propósito -->
+    <section class="plate-track" aria-label="Propósito">
+      <div class="plate-sticky">
+        <div class="plate" id="plate">
+          <div class="plate__dots" aria-hidden="true"></div>
+          <p class="plate__eyebrow mono">[ nosso propósito ]</p>
+          <p class="plate__text" id="plateText">Existimos para projetar o futuro, conectando pessoas e ideias.</p>
+          <p class="plate__sign mono" id="plateSign">juntos somos mais</p>
+          <span class="plate__mark"><svg><use href="#glyph" /></svg></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PILARES + VISÃO -->
+    <section class="section" id="pilares">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <p class="chip mono"><i class="dot"></i>pilares da IDG</p>
+            <h2 class="h-section">Os princípios que <em>nos mantêm de pé.</em></h2>
+          </div>
+        </div>
+        <div class="vision card reveal">
+          <div>
+            <p class="mono label">visão 2030</p>
+            <p class="vision__text">Ser a principal parceira na concepção, gestão e realização dos projetos de nossos clientes e estar entre as <b>10 principais empresas de engenharia e gerenciamento do Brasil</b> até 2030.</p>
+          </div>
+          <div class="vision__track" aria-hidden="true">
+            <div class="vision__bar"><i id="visionFill"></i></div>
+            <div class="vision__years mono"><span>2026</span><span>2027</span><span>2028</span><span>2029</span><span>2030</span></div>
+          </div>
+        </div>
+        <div class="pillars">
+          <article class="pillar reveal"><svg class="pillar__ico" viewBox="0 0 32 32"><path d="M16 3l10 4v8c0 7-5 12-10 14C11 27 6 22 6 15V7z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11.5 15.5l3.2 3.2 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><h3>Integridade</h3><p class="muted">Transparência e ética em cada contrato, medição e decisão.</p></article>
+          <article class="pillar reveal"><svg class="pillar__ico" viewBox="0 0 32 32"><path d="M16 4l3.5 7.2 7.9 1.1-5.7 5.6 1.3 7.8L16 22l-7 3.7 1.3-7.8-5.7-5.6 7.9-1.1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><h3>Qualidade</h3><p class="muted">Padrões certificados e indicadores acompanhados de perto.</p></article>
+          <article class="pillar reveal"><svg class="pillar__ico" viewBox="0 0 32 32"><path d="M11 21a8 8 0 1 1 10 0v3H11z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12.5 28h7M16 13v5M13.5 15.5h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><h3>Inovação</h3><p class="muted">Drones, laser scanning e BIM a serviço de decisões melhores.</p></article>
+          <article class="pillar reveal"><svg class="pillar__ico" viewBox="0 0 32 32"><circle cx="11" cy="10" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="21" cy="10" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4 26c0-5 3-8 7-8s7 3 7 8M14 26c0-5 3-8 7-8s7 3 7 8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><h3>Valorizar o colaborador</h3><p class="muted">Pessoas capacitadas, ouvidas e cuidadas constroem resultado.</p></article>
+          <article class="pillar reveal"><svg class="pillar__ico" viewBox="0 0 32 32"><path d="M16 27s-10-6-10-13a5.5 5.5 0 0 1 10-3 5.5 5.5 0 0 1 10 3c0 7-10 13-10 13z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><h3>Respeito à vida e às pessoas</h3><p class="muted">Segurança é condição para trabalhar, não uma meta a bater.</p></article>
+          <article class="pillar reveal"><svg class="pillar__ico" viewBox="0 0 32 32"><path d="M16 28V14M16 14c0-6 4-9 10-9 0 6-4 9-10 9zM16 18c0-4-3-7-9-7 0 4 3 7 9 7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><h3>Sustentabilidade</h3><p class="muted">Menos impacto hoje para que o futuro caiba no projeto.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEGMENTOS -->
+    <section class="section" id="segmentos">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <p class="chip mono"><i class="dot"></i>segmentos</p>
+            <h2 class="h-section">Onde a engenharia da IDG <em>faz diferença.</em></h2>
+          </div>
+          <p class="head__aside">Atuamos lado a lado com operações que não podem parar: plantas em funcionamento, ferrovias ativas e ampliações com prazo curto.</p>
+        </div>
+        <div class="segs-grid">
+          <article class="seg card reveal"><p class="mono label">01</p><h3>Siderurgia e metalurgia</h3><p class="muted">Ampliações, paradas e retrofit em usinas em operação, com as-built por laser e gestão rigorosa de interfaces.</p></article>
+          <article class="seg card reveal"><p class="mono label">02</p><h3>Mineração</h3><p class="muted">Topografia, aerofotogrametria e geotecnia para cavas, pilhas e estruturas, com controle de volumes e segurança.</p></article>
+          <article class="seg card reveal"><p class="mono label">03</p><h3>Logística ferroviária e portuária</h3><p class="muted">Projetos e fiscalização em pátios, terminais e vias, sincronizados com janelas de operação.</p></article>
+          <article class="seg card reveal"><p class="mono label">04</p><h3>Óleo e gás</h3><p class="muted">Engenharia e gerenciamento com foco em conformidade normativa, SSMA e confiabilidade.</p></article>
+          <article class="seg card reveal"><p class="mono label">05</p><h3>Papel e celulose</h3><p class="muted">Implantação e expansão de unidades industriais com cronograma integrado do projeto à partida.</p></article>
+          <article class="seg card reveal"><p class="mono label">06</p><h3>Indústria e infraestrutura</h3><p class="muted">Greenfield, brownfield e projetos correntes para empreendimentos de todos os portes.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLIENTES -->
+    <section class="clients" id="clientes" aria-label="Clientes">
+      <div class="wrap clients__head reveal">
+        <p class="chip mono"><i class="dot"></i>clientes</p>
+        <p class="clients__title">Confiança de quem <em>move a indústria.</em></p>
+      </div>
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee__track">
+          <span>ArcelorMittal</span><span>Petrobras</span><span>Vallourec</span><span>VLI</span><span>Ternium</span><span>Cenibra</span><span>Gerdau</span><span>Rumo</span><span>Aperam</span>
+          <span>ArcelorMittal</span><span>Petrobras</span><span>Vallourec</span><span>VLI</span><span>Ternium</span><span>Cenibra</span><span>Gerdau</span><span>Rumo</span><span>Aperam</span>
+        </div>
+      </div>
+      <p class="sr-only">Clientes: ArcelorMittal, Petrobras, Vallourec, VLI, Ternium, Cenibra, Gerdau, Rumo e Aperam.</p>
+    </section>
+
+    <!-- ONDE ESTAMOS -->
+    <section class="section" id="presenca">
+      <div class="wrap presence">
+        <div class="presence__txt reveal">
+          <p class="chip mono"><i class="dot"></i>onde estamos</p>
+          <h2 class="h-section">Presente em todo o <em>território nacional.</em></h2>
+          <p class="muted">Escritórios próprios e equipes alocadas estrategicamente em diversas localidades garantem agilidade, proximidade e eficiência em cada projeto.</p>
+          <p class="muted">Também atendemos clientes fora do Brasil e seguimos ampliando a operação. Onde houver um desafio de engenharia, a IDG está pronta para viabilizar o empreendimento.</p>
+          <div class="presence__legend mono">
+            <span><i class="pin pin--hq"></i>sede · Belo Horizonte (MG)</span>
+            <span><i class="pin"></i>escritórios e frentes de trabalho</span>
+          </div>
+        </div>
+        <div class="card map reveal">
+          <svg id="map" viewBox="0 0 400 400" role="img" aria-label="Mapa do Brasil com a sede da IDG em Belo Horizonte e frentes de trabalho em várias regiões"></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- INDICADORES -->
+    <section class="section" id="indicadores">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <p class="chip mono"><i class="dot"></i>gestão com indicadores</p>
+            <h2 class="h-section">Cada frente, <em>acompanhada por dados.</em></h2>
+          </div>
+          <p class="head__aside">Relatórios diários, medições e indicadores de segurança reunidos num só painel, para o cliente acompanhar o empreendimento sem esperar a reunião de fim de mês.</p>
+        </div>
+        <div class="dash" id="dash">
+          <div class="card dash__week settle">
+            <div class="dash__top mono"><span>avanço físico por frente</span><span class="next"><i class="clock"></i>próximo RDO em <b id="nextRun">40</b> min</span></div>
+            <svg class="iso__svg" id="isoChart" viewBox="0 0 560 220" aria-label="Avanço físico por frente de trabalho"></svg>
+          </div>
+          <div class="card dash__donut settle">
+            <p class="mono label">avanço geral</p>
+            <div class="donut">
+              <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="46" class="donut__track"/><circle cx="60" cy="60" r="46" class="donut__arc" id="donutArc" pathLength="100"/></svg>
+              <span class="donut__val"><span id="donutVal">0</span>%</span>
+            </div>
+            <p class="muted small">do escopo físico previsto até esta semana</p>
+          </div>
+          <div class="card dash__wait settle">
+            <p class="mono label">RDOs assinados hoje</p>
+            <p class="big-num" id="waitNum">0</p>
+            <p class="muted small">de 4 frentes, todos com registro fotográfico</p>
+          </div>
+          <div class="card dash__feed settle">
+            <p class="mono label">agora</p>
+            <ul class="feed mono" id="feed">
+              <li><i class="dot"></i>medição 11 aprovada</li>
+              <li><i class="dot"></i>voo de drone concluído</li>
+              <li><i class="dot"></i>DDS frente 1 registrado</li>
+            </ul>
+          </div>
+          <div class="card dash__tips settle">
+            <p class="mono label">boa prática</p>
+            <div class="tips" id="tips">
+              <p class="is-on">Compare o voo de drone da semana com o modelo BIM antes de medir.</p>
+              <p>Libere a frente só depois do clash detection zerado na disciplina.</p>
+              <p>Registre o DDS no mesmo painel que o RDO: segurança também é avanço.</p>
+            </div>
+            <div class="tips__dots" id="tipsDots"><i class="is-on"></i><i></i><i></i></div>
+          </div>
+        </div>
+        <p class="mono dim small dash__note">painel ilustrativo · dados de exemplo</p>
+      </div>
+    </section>
+
+    <!-- ESG + COMPLIANCE -->
+    <section class="section" id="esg">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <p class="chip mono"><i class="dot"></i>ESG e compliance</p>
+            <h2 class="h-section">Crescer com <em>responsabilidade.</em></h2>
+          </div>
+          <p class="head__aside">Crescimento sustentável vai além do resultado financeiro. Os princípios ambientais, sociais e de governança fazem parte da estratégia e de cada projeto.</p>
+        </div>
+        <div class="duo">
+          <article class="card reveal">
+            <h3>ESG na prática</h3>
+            <p class="muted">Um processo em evolução contínua, com projetos internos, indicadores e ações estruturadas para ampliar o impacto positivo.</p>
+            <ul class="initiatives">
+              <li><b class="count" data-to="2000" data-sep>0</b><span>mudas plantadas no compromisso com um futuro mais verde</span></li>
+              <li><b>Frota</b><span>veículos sustentáveis nas operações de campo</span></li>
+              <li><b>IDG Cuida</b><span>programa de saúde e bem-estar, incluindo saúde mental</span></li>
+            </ul>
+            <a class="link-arrow" href="https://www.idgengenharia.com/esg" target="_blank" rel="noopener">Acessar o Relatório ESG<svg><use href="#i-out" /></svg></a>
+          </article>
+          <article class="card reveal">
+            <h3>Compliance e integridade</h3>
+            <p class="muted">Operamos com integridade, transparência e responsabilidade, no cumprimento rigoroso de leis, normas e boas práticas do setor.</p>
+            <ul class="docs mono">
+              <li>Política de Compliance</li><li>Código de Conduta</li><li>Antissuborno</li><li>Política de Integridade</li><li>Conflito de Interesse</li><li>Segurança da Informação</li><li>Gestão Integrada</li><li>Segurança Viária</li><li>Transparência e Igualdade Salarial</li>
+            </ul>
+            <div class="docs__ctas">
+              <a class="btn btn--ghost btn--sm" href="https://www.idgengenharia.com/compliance" target="_blank" rel="noopener">Ver documentos<svg class="ico"><use href="#i-out" /></svg></a>
+              <a class="btn btn--accent btn--sm" href="https://www.idgengenharia.com/compliance" target="_blank" rel="noopener">Portal de Integridade</a>
+            </div>
+            <p class="mono dim small">canal seguro, com anonimato garantido</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CERTIFICAÇÕES -->
+    <section class="section" id="certificacoes">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <p class="chip mono"><i class="dot"></i>certificados e prêmios</p>
+            <h2 class="h-section">Certificações <em>e reconhecimentos.</em></h2>
+          </div>
+        </div>
+        <div class="certs">
+          <div class="cert settle"><p class="cert__code">ISO 9001</p><p class="mono dim small">:2015</p><p>Gestão da qualidade</p></div>
+          <div class="cert settle"><p class="cert__code">ISO 14001</p><p class="mono dim small">:2015</p><p>Gestão ambiental</p></div>
+          <div class="cert settle"><p class="cert__code">ISO 45001</p><p class="mono dim small">:2018</p><p>Saúde e segurança ocupacional</p></div>
+          <div class="cert settle"><p class="cert__code">ISO 39001</p><p class="mono dim small">:2015</p><p>Segurança viária</p></div>
+          <div class="cert settle"><p class="cert__code cert__code--sm">BIM Fórum Brasil</p><p class="mono dim small">associada 2024 · golden</p><p>Compromisso com a engenharia digital</p></div>
+          <div class="cert settle"><p class="cert__code cert__code--sm">Fornecedor Seguro</p><p class="mono dim small">Usiminas</p><p>Reconhecimento em segurança</p></div>
+          <div class="cert settle"><p class="cert__code cert__code--sm">Parceria em Movimento</p><p class="mono dim small">Rumo</p><p>Selo de reconhecimento</p></div>
+          <div class="cert settle"><p class="cert__code cert__code--sm">Selo Aço</p><p class="mono dim small">Ternium</p><p>Destaque em segurança</p></div>
+          <div class="cert settle"><p class="cert__code cert__code--sm">Instituto Arvoredo</p><p class="mono dim small">parceria ambiental</p><p>Reflorestamento</p></div>
+          <div class="cert settle"><p class="cert__code cert__code--sm">Plante Árvore</p><p class="mono dim small">eu colaboro</p><p>Compensação ambiental</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RADAR IDG -->
+    <section class="section" id="radar">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <p class="chip mono"><i class="dot"></i>radar IDG</p>
+            <h2 class="h-section">Conteúdo de quem <em>está em campo.</em></h2>
+          </div>
+          <div class="radar__nav">
+            <button class="round-btn" id="radarPrev" aria-label="Conteúdos anteriores"><svg style="transform:scaleX(-1)"><use href="#i-arrow" /></svg></button>
+            <button class="round-btn" id="radarNext" aria-label="Próximos conteúdos"><svg><use href="#i-arrow" /></svg></button>
+          </div>
+        </div>
+        <div class="radar__cats mono reveal">
+          <a href="https://www.idgengenharia.com/radaridg/categories/solu%C3%A7%C3%B5es-em-engenharia" target="_blank" rel="noopener">Soluções em Engenharia</a>
+          <a href="https://www.idgengenharia.com/radaridg/categories/alta-performance-operacional" target="_blank" rel="noopener">Alta Performance Operacional</a>
+          <a href="https://www.idgengenharia.com/radaridg/categories/talentos-em-campo" target="_blank" rel="noopener">Talentos em Campo</a>
+          <a href="https://www.idgengenharia.com/radaridg/categories/controle-conformidade" target="_blank" rel="noopener">Controle &amp; Conformidade</a>
+          <a href="https://www.idgengenharia.com/radaridg/categories/lideran%C3%A7a-cultura" target="_blank" rel="noopener">Liderança &amp; Cultura</a>
+        </div>
+        <div class="radar reveal" id="radarTrack">
+          <a class="post card" href="https://www.idgengenharia.com/post/drones-em-obras-gerenciamento-fiscalizacao" target="_blank" rel="noopener"><span class="post__art post__art--a" aria-hidden="true"></span><p class="mono label">tecnologia</p><h3>Drones em grandes obras: tecnologia que amplia a visão, a segurança e o controle</h3><span class="post__more mono">ler no Radar<svg><use href="#i-out" /></svg></span></a>
+          <a class="post card" href="https://www.idgengenharia.com/post/acompanhamento-tecnico-de-obras-ato" target="_blank" rel="noopener"><span class="post__art post__art--b" aria-hidden="true"></span><p class="mono label">engenharia</p><h3>Engenharia que continua em campo: o valor do Acompanhamento Técnico de Obras</h3><span class="post__more mono">ler no Radar<svg><use href="#i-out" /></svg></span></a>
+          <a class="post card" href="https://www.idgengenharia.com/post/gestao-de-projetos-industriais" target="_blank" rel="noopener"><span class="post__art post__art--c" aria-hidden="true"></span><p class="mono label">gestão</p><h3>Por que grandes projetos industriais fracassam? A gestão é o verdadeiro diferencial da engenharia</h3><span class="post__more mono">ler no Radar<svg><use href="#i-out" /></svg></span></a>
+          <a class="post card" href="https://www.idgengenharia.com/post/terras-raras-brasil-engenharia" target="_blank" rel="noopener"><span class="post__art post__art--d" aria-hidden="true"></span><p class="mono label">mercado</p><h3>Terras raras: a vantagem competitiva do Brasil será construída pela engenharia</h3><span class="post__more mono">ler no Radar<svg><use href="#i-out" /></svg></span></a>
+          <a class="post card" href="https://www.idgengenharia.com/post/idg-certifica%C3%A7%C3%A3o-iso39001-seguran%C3%A7a-viarias" target="_blank" rel="noopener"><span class="post__art post__art--e" aria-hidden="true"></span><p class="mono label">segurança</p><h3>IDG conquista certificação ISO 39001 e reforça compromisso com a vida, a segurança e a sociedade</h3><span class="post__more mono">ler no Radar<svg><use href="#i-out" /></svg></span></a>
+          <a class="post card" href="https://www.idgengenharia.com/post/engenharia-integrada-atua%C3%A7%C3%A3o-do-greenfield-ao-brownfield-e-aos-projetos-correntes" target="_blank" rel="noopener"><span class="post__art post__art--f" aria-hidden="true"></span><p class="mono label">engenharia</p><h3>Engenharia integrada: atuação do greenfield ao brownfield e aos projetos correntes</h3><span class="post__more mono">ler no Radar<svg><use href="#i-out" /></svg></span></a>
+        </div>
+        <a class="link-arrow" href="https://www.idgengenharia.com/radaridg" target="_blank" rel="noopener">Ver todos os conteúdos<svg><use href="#i-out" /></svg></a>
+      </div>
+    </section>
+
+    <!-- CARREIRAS -->
+    <section class="section" id="carreiras">
+      <div class="wrap careers card reveal">
+        <div class="careers__txt">
+          <p class="chip mono"><i class="dot"></i>carreiras</p>
+          <h2 class="h-section">Aqui, pessoas <em>constroem o futuro</em> todos os dias.</h2>
+          <p class="muted">Valorizamos talentos, incentivamos o desenvolvimento profissional e acreditamos que grandes projetos começam com grandes pessoas. Se você quer crescer, inovar e fazer parte de uma empresa que conecta pessoas e ideias, seu lugar é na IDG.</p>
+          <a class="btn btn--accent" href="https://jobs.quickin.io/idgengenharia/jobs?src=SiteIDG" target="_blank" rel="noopener">Ver vagas abertas<svg class="ico"><use href="#i-out" /></svg></a>
+        </div>
+        <ul class="careers__list">
+          <li><b>Presença nacional</b><span class="muted">vagas em diversas áreas e regiões do Brasil</span></li>
+          <li><b>Projetos de grande porte</b><span class="muted">experiência com os principais players da indústria</span></li>
+          <li><b>Crescimento contínuo</b><span class="muted">uma empresa em expansão, com trilhas de capacitação</span></li>
+          <li><b>IDG Cuida</b><span class="muted">saúde, bem-estar e saúde mental como parte da cultura</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- COTAÇÃO -->
+    <section class="section section--quote" id="cotacao">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <p class="chip mono"><i class="dot"></i>faça sua cotação</p>
+            <h2 class="h-section">Monte o escopo <em>em um minuto.</em></h2>
+          </div>
+          <p class="head__aside">Diga em que fase o empreendimento está e escolha as soluções. A equipe comercial responde com uma proposta técnica.</p>
+        </div>
+
+        <div class="meter card reveal">
+          <div class="meter__main">
+            <p class="mono label">fase do empreendimento</p>
+            <label class="meter__q" for="phaseRange">Em que momento está o seu projeto?</label>
+            <div class="range">
+              <div class="range__fill" id="rangeFill"></div>
+              <input type="range" id="phaseRange" min="0" max="300" step="1" value="200" aria-describedby="phaseOut" />
+            </div>
+            <div class="range__ticks mono"><span>estudo</span><span>projeto</span><span>implantação</span><span>operação</span></div>
+            <p class="mono label meter__pick">soluções de interesse</p>
+            <div class="picks" id="picks" role="group" aria-label="Soluções de interesse"></div>
+          </div>
+          <div class="meter__side">
+            <p class="mono label">seu escopo</p>
+            <p class="meter__plan" id="phaseOut">Implantação</p>
+            <p class="meter__price"><span id="pickCount">0</span><small class="mono"> soluções</small></p>
+            <p class="mono muted small" id="phaseHint"></p>
+            <a class="btn btn--accent btn--block" href="#contato" id="quoteGo">Enviar para a IDG</a>
+          </div>
+        </div>
+
+        <div class="contact" id="contato">
+          <form class="card contact__form reveal" id="contactForm" novalidate>
+            <p class="mono label">contato comercial</p>
+            <div class="fields">
+              <label>Nome<input name="nome" autocomplete="name" required /></label>
+              <label>E-mail<input name="email" type="email" autocomplete="email" required /></label>
+              <label>Telefone<input name="telefone" type="tel" autocomplete="tel" /></label>
+              <label>Empresa<input name="empresa" autocomplete="organization" /></label>
+              <label class="fields__full">Mensagem<textarea name="mensagem" id="msg" rows="4" placeholder="Conte o seu desafio"></textarea></label>
+            </div>
+            <button class="btn btn--accent" type="submit">Enviar mensagem</button>
+            <p class="form__msg mono" id="formMsg" role="status"></p>
+          </form>
+          <div class="contact__side reveal">
+            <div class="card contact__info">
+              <p class="mono label">fale direto</p>
+              <a class="contact__line" href="tel:+553132851661"><span class="mono dim">telefone</span>(31) 3285-1661</a>
+              <a class="contact__line" href="https://api.whatsapp.com/send?phone=5531992097489" target="_blank" rel="noopener"><span class="mono dim">whatsapp</span>(31) 99209-7489</a>
+              <p class="contact__line"><span class="mono dim">sede</span>Belo Horizonte · MG</p>
+            </div>
+            <div class="card contact__cta">
+              <p class="mono label">próximo passo</p>
+              <p class="contact__claim">Qual é o desafio de engenharia que está tirando o seu sono?</p>
+              <div class="socials mono">
+                <a href="https://www.linkedin.com/company/idgengenharia/" target="_blank" rel="noopener" aria-label="LinkedIn">in</a>
+                <a href="https://www.instagram.com/idg_engenharia" target="_blank" rel="noopener" aria-label="Instagram">ig</a>
+                <a href="https://www.youtube.com/@idgengenharia" target="_blank" rel="noopener" aria-label="YouTube">yt</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" id="rodape">
+    <div class="ticker mono" aria-hidden="true">
+      <div class="ticker__track">
+        <span><i class="dot"></i>ISO 9001 · 14001 · 45001 · 39001</span><span><i class="dot"></i>+27 anos de engenharia</span><span><i class="dot"></i>presença em todo o território nacional</span><span><i class="dot"></i>atendimento em toda a América</span>
+        <span><i class="dot"></i>ISO 9001 · 14001 · 45001 · 39001</span><span><i class="dot"></i>+27 anos de engenharia</span><span><i class="dot"></i>presença em todo o território nacional</span><span><i class="dot"></i>atendimento em toda a América</span>
+      </div>
+    </div>
+    <div class="wrap footer__grid">
+      <div>
+        <div class="brand"><span class="brand__mark"><svg><use href="#glyph" /></svg></span><span class="brand__name">IDG<small>engenharia e consultoria</small></span></div>
+        <p class="muted">Transformamos desafios em projetos bem-sucedidos, do projeto ao gerenciamento do seu empreendimento.</p>
+        <p class="mono dim small">sede em Belo Horizonte · MG</p>
+      </div>
+      <nav class="footer__cols" aria-label="Rodapé">
+        <div><p class="mono label">soluções</p>
+          <a href="#solucoes" data-go-svc="0">Engenharia</a><a href="#solucoes" data-go-svc="1">Aerofotogrametria</a><a href="#solucoes" data-go-svc="2">Topografia</a><a href="#solucoes" data-go-svc="3">Gerenciamento</a><a href="#solucoes" data-go-svc="4">EPC e EPCM</a><a href="#solucoes" data-go-svc="5">Escaneamento LS3D</a><a href="#solucoes" data-go-svc="6">BIM</a><a href="#solucoes" data-go-svc="7">Geologia e geotecnia</a>
+        </div>
+        <div><p class="mono label">empresa</p>
+          <a href="#quem-somos">Quem somos</a><a href="#pilares">Pilares</a><a href="#esg">ESG</a><a href="https://www.idgengenharia.com/compliance" target="_blank" rel="noopener">Compliance</a><a href="#radar">Radar IDG</a><a href="#carreiras">Carreiras</a>
+        </div>
+        <div><p class="mono label">contato</p>
+          <a href="tel:+553132851661">(31) 3285-1661</a><a href="https://api.whatsapp.com/send?phone=5531992097489" target="_blank" rel="noopener">WhatsApp</a><a href="#cotacao">Faça sua cotação</a>
+        </div>
+        <div><p class="mono label">redes</p>
+          <a href="https://www.linkedin.com/company/idgengenharia/" target="_blank" rel="noopener">LinkedIn</a><a href="https://www.instagram.com/idg_engenharia" target="_blank" rel="noopener">Instagram</a><a href="https://www.youtube.com/@idgengenharia" target="_blank" rel="noopener">YouTube</a>
+        </div>
+      </nav>
+    </div>
+    <div class="wrap footer__legal mono dim small">
+      <span>© 2026 IDG Engenharia e Consultoria</span>
+      <a href="https://www.idgengenharia.com/privacidade" target="_blank" rel="noopener">Política de privacidade</a>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

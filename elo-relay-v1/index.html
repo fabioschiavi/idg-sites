@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Elo — automação entre as suas ferramentas</title>
+  <meta name="description" content="Elo conecta seus apps, executa as etapas repetitivas e só chama alguém quando existe uma decisão de verdade." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23c6f432'/%3E%3Cg fill='none' stroke='%230b0d08' stroke-width='2.6' transform='rotate(-35 16 16)'%3E%3Crect x='6' y='12' width='12' height='8' rx='4'/%3E%3Crect x='14' y='12' width='12' height='8' rx='4'/%3E%3C/g%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script type="importmap">
+  { "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+  </script>
+</head>
+<body class="is-loading">
+  <!-- símbolo reutilizado em todo o site -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="glyph" viewBox="0 0 32 32">
+      <g fill="none" stroke="currentColor" stroke-width="2.6" transform="rotate(-35 16 16)">
+        <rect x="6" y="12" width="12" height="8" rx="4" />
+        <rect x="14" y="12" width="12" height="8" rx="4" />
+      </g>
+    </symbol>
+  </svg>
+
+  <!-- PRELOADER: anel conta a página e se dobra dentro do logo -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader__center">
+      <svg class="loader__ring" viewBox="0 0 120 120">
+        <circle class="loader__track" cx="60" cy="60" r="54" />
+        <circle class="loader__arc" cx="60" cy="60" r="54" pathLength="100" />
+      </svg>
+      <div class="loader__mark" id="loaderMark"><svg><use href="#glyph" /></svg></div>
+    </div>
+    <div class="loader__count mono"><span id="loaderCount">0</span>%</div>
+  </div>
+
+  <canvas id="stream" aria-hidden="true"></canvas>
+  <div class="stream-fallback" aria-hidden="true"></div>
+
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <a class="brand" href="#top" aria-label="Elo, início">
+        <span class="brand__mark" id="navMark"><svg><use href="#glyph" /></svg></span>
+        <span class="brand__name">Elo</span>
+      </a>
+      <nav class="nav__links" aria-label="Principal">
+        <a href="#produto">Produto</a>
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#clientes">Clientes</a>
+        <a href="#precos">Preços</a>
+      </nav>
+      <div class="nav__right">
+        <a class="status-pill mono" href="#rodape"><i class="dot"></i>todos os sistemas ok</a>
+        <a class="btn btn--lime btn--sm" href="#comecar">Começar grátis</a>
+        <button class="nav__burger" id="burger" aria-label="Abrir menu" aria-expanded="false"><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero" id="top">
+      <div class="dotgrid" aria-hidden="true"></div>
+      <div class="wrap hero__grid">
+        <div class="hero__copy">
+          <p class="chip mono" data-intro><i class="sq"></i>beta aberto · 312 integrações</p>
+          <h1 class="h-display" data-intro>Cada etapa sabe <em>quem vem depois.</em></h1>
+          <p class="lede" data-intro>Elo conecta seus apps, executa as etapas repetitivas e só chama alguém quando existe uma decisão de verdade.</p>
+          <div class="hero__ctas" data-intro>
+            <a class="btn btn--lime" href="#comecar">Começar grátis</a>
+            <a class="btn btn--ghost" href="#produto"><svg class="ico" viewBox="0 0 12 12"><path d="M3 2l7 4-7 4z" fill="currentColor"/></svg>Ver um fluxo em 2 min</a>
+          </div>
+          <p class="fine mono" data-intro>teste por 14 dias · sem cartão de crédito</p>
+        </div>
+
+        <div class="hero__stage" data-intro>
+          <div class="win" id="heroWin">
+            <div class="win__bar">
+              <span class="win__title">Pedido novo → estoque</span>
+              <span class="win__meta mono">3 etapas · 1 desvio</span>
+              <span class="win__state mono"><i class="dot"></i>rodando</span>
+            </div>
+            <div class="win__body">
+              <div class="win__rail" aria-hidden="true">
+                <span class="is-on"><svg viewBox="0 0 16 16"><path d="M4 2l8 6-4 1 2 4-1.6.8-2-4L4 12z" fill="currentColor"/></svg></span>
+                <span><svg viewBox="0 0 16 16"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></span>
+                <span><svg viewBox="0 0 16 16"><path d="M4 12V7a3 3 0 013-3h5M9 1l3 3-3 3" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></span>
+              </div>
+              <div class="flow" id="flow">
+                <svg class="flow__edges" viewBox="0 0 520 250" preserveAspectRatio="none" aria-hidden="true">
+                  <path id="e1" class="edge" d="M128 125 C 160 125, 160 125, 188 125" />
+                  <path id="e2" class="edge" d="M322 118 C 350 118, 350 58, 378 58" />
+                  <path id="e3" class="edge" d="M322 132 C 350 132, 350 192, 378 192" />
+                  <path class="edge-pulse" data-edge="e1" d="M128 125 C 160 125, 160 125, 188 125" />
+                  <path class="edge-pulse" data-edge="e2" d="M322 118 C 350 118, 350 58, 378 58" />
+                  <path class="edge-pulse" data-edge="e3" d="M322 132 C 350 132, 350 192, 378 192" />
+                </svg>
+                <span class="flow__label mono" style="left:66.5%;top:15%">sim</span>
+                <span class="flow__label mono" style="left:66.5%;top:78%">não</span>
+                <div class="node" data-node="n1" style="left:0%;top:36%"><b>Pedido criado</b><small class="mono">shopify</small></div>
+                <div class="node node--cond" data-node="n2" style="left:36%;top:36%"><b>Estoque &lt; 20?</b><small class="mono">condição</small></div>
+                <div class="node" data-node="n3" style="left:72.5%;top:9%"><b>Avisar compras</b><small class="mono">slack · #compras</small></div>
+                <div class="node" data-node="n4" style="left:72.5%;top:63%"><b>Emitir NF-e</b><small class="mono">bling</small></div>
+                <span class="flow__wait mono" style="left:74%;top:40%">⏱ resposta em 12 min</span>
+                <span class="flow__zoom mono">100%</span>
+              </div>
+            </div>
+            <div class="win__runs">
+              <p class="mono label">últimas execuções</p>
+              <ul id="runs" class="mono">
+                <li><i class="dot"></i><span>09:41:12</span><span>pedido #48213</span><span>212 ms</span></li>
+                <li><i class="dot"></i><span>09:38:57</span><span>lote de notas fiscais</span><span>1,8 s</span></li>
+                <li><i class="dot"></i><span>09:35:04</span><span>lembrete de boleto</span><span>380 ms</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROBLEMA + COMO SE MONTA -->
+    <section class="section" id="produto">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <p class="chip mono"><i class="dot"></i>o problema</p>
+            <h2 class="h-section">Metade do dia é <em>copiar e colar.</em></h2>
+          </div>
+          <p class="head__aside">Exportar a planilha, conferir se chegou, perguntar pra alguém se pode seguir. O Elo assume a parte repetitiva e deixa as decisões com você.</p>
+        </div>
+
+        <div class="feature reveal">
+          <div class="feature__txt">
+            <p class="step mono">01 <span>montar</span></p>
+            <h3>Um quadro, todos os caminhos</h3>
+            <p>Arraste um gatilho, adicione uma condição, divida o fluxo. Se uma etapa falhar de madrugada, ela tenta de novo sozinha até quatro vezes.</p>
+          </div>
+          <div class="card trace" id="trace">
+            <p class="mono trace__id">execução <span id="traceId">52817</span></p>
+            <div class="trace__rows">
+              <div class="trace__row"><span class="mono">ler pedido</span><div class="bar"><i style="--l:0;--w:.34"></i></div><span class="mono ms">68 ms</span></div>
+              <div class="trace__row"><span class="mono">conferir estoque</span><div class="bar"><i style="--l:.34;--w:.22"></i></div><span class="mono ms">44 ms</span></div>
+              <div class="trace__row"><span class="mono">desvio: &lt; 20</span><div class="bar"><i style="--l:.56;--w:.06"></i></div><span class="mono ms">3 ms</span></div>
+              <div class="trace__row"><span class="mono">avisar compras</span><div class="bar"><i style="--l:.62;--w:.33"></i></div><span class="mono ms">97 ms</span></div>
+            </div>
+            <div class="trace__axis mono"><span>0</span><span>50</span><span>100</span><span>150</span><span>200 ms</span></div>
+          </div>
+        </div>
+
+        <div class="feature feature--flip reveal">
+          <div class="feature__txt">
+            <p class="step mono">02 <span>aprovar</span></p>
+            <h3>Aprovação onde a equipe já conversa</h3>
+            <p>Uma etapa pode perguntar no Slack ou no Teams. Alguém responde sim ou não e o fluxo continua. Ninguém precisa aprender mais um painel.</p>
+          </div>
+          <div class="card chat" id="chat">
+            <div class="chat__head mono"><span>#compras</span><span>hoje</span></div>
+            <div class="chat__body">
+              <div class="chat__typing" id="chatTyping"><i></i><i></i><i></i></div>
+              <div class="chat__msg" id="chatMsg">
+                <span class="chat__avatar"><svg><use href="#glyph" /></svg></span>
+                <div>
+                  <p class="chat__who">Elo <small class="mono">app · 09:42</small></p>
+                  <p>O SKU <b>2231 · garrafa 750 ml</b> ficou com 14 unidades. Repor 150?</p>
+                  <div class="chat__actions">
+                    <button class="chat__btn chat__btn--yes" id="chatYes" tabindex="-1">Aprovar</button>
+                    <button class="chat__btn" tabindex="-1">Recusar</button>
+                  </div>
+                  <p class="chat__done mono" id="chatDone">✓ aprovado por Marina · pedido de compra 7731 enviado</p>
+                </div>
+              </div>
+            </div>
+            <span class="cursor" id="chatCursor" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M2 1l11 7-5 1 3 5-2 1-3-5-4 3z" fill="#fff" stroke="#000" stroke-width=".8"/></svg></span>
+          </div>
+        </div>
+
+        <div class="feature reveal">
+          <div class="feature__txt">
+            <p class="step mono">03 <span>auditar</span></p>
+            <h3>Toda execução fica registrada</h3>
+            <p>Entradas, saídas e tempos guardados por 90 dias. Reexecute qualquer etapa antes de confiar nela com dados de verdade.</p>
+          </div>
+          <div class="card iso">
+            <div class="iso__head mono"><span>execuções por dia</span><span>média 41.200</span></div>
+            <svg class="iso__svg" id="isoChart" viewBox="0 0 560 220" aria-label="Gráfico de execuções por dia da semana"></svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLACA: abre a partir do logo e volta pra ele -->
+    <section class="plate-track" aria-label="Manifesto">
+      <div class="plate-sticky">
+        <div class="plate" id="plate">
+          <div class="plate__dots" aria-hidden="true"></div>
+          <p class="plate__eyebrow mono">[ o que a gente vende de verdade ]</p>
+          <p class="plate__text" id="plateText">O melhor processo é aquele que ninguém precisa lembrar de fazer.</p>
+          <span class="plate__mark"><svg><use href="#glyph" /></svg></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONFIABILIDADE -->
+    <section class="section" id="como-funciona">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <p class="chip mono"><i class="dot"></i>confiabilidade</p>
+            <h2 class="h-section"><em>Previsível</em> onde importa.</h2>
+          </div>
+          <p class="head__aside">Credenciais, novas tentativas, limites de requisição e onde os dados ficam. A parte invisível que segura a operação.</p>
+        </div>
+        <div class="duo">
+          <article class="card reveal">
+            <h3>Um só motor para todos os apps</h3>
+            <p class="muted">O Elo guarda as credenciais, controla os limites e repete o que falhar. A etapa funciona igual no Shopify ou numa API que você escreveu ontem.</p>
+            <p class="mono label">um só motor</p>
+            <svg class="net" id="net" viewBox="0 0 460 200" aria-hidden="true"></svg>
+          </article>
+          <article class="card reveal">
+            <h3>Roda onde seus dados moram</h3>
+            <p class="muted">Escolha São Paulo, Virgínia ou Frankfurt. Dados e registros ficam na região escolhida, e o log de auditoria comprova.</p>
+            <p class="mono label">onde roda</p>
+            <div class="regions" id="regions">
+              <div class="region"><span class="mono">são paulo</span><div class="rbar"><i data-v="54"></i></div><span class="mono pct" data-v="54">0%</span></div>
+              <div class="region"><span class="mono">virgínia</span><div class="rbar"><i data-v="31"></i></div><span class="mono pct" data-v="31">0%</span></div>
+              <div class="region"><span class="mono">frankfurt</span><div class="rbar"><i data-v="15"></i></div><span class="mono pct" data-v="15">0%</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAINEL DO DIA -->
+    <section class="section" id="painel">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <p class="chip mono"><i class="dot"></i>painel</p>
+            <h2 class="h-section">Uma <em>segunda-feira</em> vista pelo Elo.</h2>
+          </div>
+          <p class="head__aside">A tela que fica aberta o dia todo: o que rodou, o que está na fila e quem ainda precisa responder.</p>
+        </div>
+        <div class="dash" id="dash">
+          <div class="card dash__week settle">
+            <div class="dash__top mono"><span>esta semana, execuções por hora</span><span class="next"><i class="clock"></i>próxima em <b id="nextRun">4</b> min</span></div>
+            <div class="heat" id="heat"></div>
+          </div>
+          <div class="card dash__donut settle">
+            <p class="mono label">no automático</p>
+            <div class="donut">
+              <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="46" class="donut__track"/><circle cx="60" cy="60" r="46" class="donut__arc" id="donutArc" pathLength="100"/></svg>
+              <span class="donut__val"><span id="donutVal">0</span>%</span>
+            </div>
+            <p class="muted small">das etapas terminaram sem passar por ninguém</p>
+          </div>
+          <div class="card dash__wait settle">
+            <p class="mono label">aguardando você</p>
+            <p class="big-num" id="waitNum">0</p>
+            <p class="muted small">aprovações abertas, a mais antiga há 26 min</p>
+          </div>
+          <div class="card dash__feed settle">
+            <p class="mono label">agora</p>
+            <ul class="feed mono" id="feed">
+              <li><i class="dot"></i>NF-e 8841 emitida</li>
+              <li><i class="dot"></i>reposição 7731 aprovada</li>
+              <li><i class="dot"></i>lembrete de boleto enviado</li>
+            </ul>
+          </div>
+          <div class="card dash__tips settle">
+            <p class="mono label">dica</p>
+            <div class="tips" id="tips">
+              <p class="is-on">Agrupe notas fiscais por lote para cair abaixo do limite da API.</p>
+              <p>Uma condição com prazo evita que aprovações fiquem esquecidas.</p>
+              <p>Rode o fluxo em modo teste com dados reais antes de ligar.</p>
+            </div>
+            <div class="tips__dots" id="tipsDots"><i class="is-on"></i><i></i><i></i></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROVA -->
+    <section class="section" id="clientes">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <p class="chip mono"><i class="dot"></i>resultados</p>
+            <h2 class="h-section">Números que <em>ninguém discute.</em></h2>
+          </div>
+        </div>
+        <div class="stats">
+          <div class="stat reveal">
+            <p class="mono label">execuções</p>
+            <p class="stat__num"><span class="count" data-to="48930" data-sep=".">0</span></p>
+            <p class="mono muted small">num dia útil comum</p>
+            <svg class="spark" viewBox="0 0 240 50" preserveAspectRatio="none"><path pathLength="1" d="M0 44 L14 40 L28 42 L42 35 L56 37 L70 30 L84 33 L98 27 L112 29 L126 22 L140 25 L154 19 L168 21 L182 15 L196 17 L210 10 L224 12 L240 6"/></svg>
+          </div>
+          <div class="stat reveal">
+            <p class="mono label">tempo de volta</p>
+            <p class="stat__num"><span class="count" data-to="11">0</span></p>
+            <p class="mono muted small">horas por semana devolvidas a cada pessoa</p>
+            <div class="segs" data-on="11"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
+          <div class="stat reveal">
+            <p class="mono label">primeira tentativa</p>
+            <p class="stat__num"><span class="count" data-to="61">0</span>%</p>
+            <p class="mono muted small">das execuções terminam de primeira</p>
+            <div class="prog"><i data-v="61"></i></div>
+          </div>
+        </div>
+        <div class="quotes">
+          <figure class="quote reveal">
+            <blockquote>O fechamento do mês saiu de três dias para uma tarde. Ninguém mais caça planilha no e-mail.</blockquote>
+            <figcaption><b>Juliana Prates</b><span class="mono">gerente financeira, Moura &amp; Cia</span></figcaption>
+          </figure>
+          <figure class="quote reveal">
+            <blockquote>O suporte parou de colar pedido no ERP à mão. Sobrou tempo pra conversar com cliente.</blockquote>
+            <figcaption><b>Rafael Tenório</b><span class="mono">operações, Brisa Cosméticos</span></figcaption>
+          </figure>
+          <figure class="quote reveal">
+            <blockquote>Quando algo quebra, abro o registro e vejo o que entrou e o que saiu. Foi isso que convenceu o time de TI.</blockquote>
+            <figcaption><b>Carla Nunes</b><span class="mono">CTO, Lote 7</span></figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- PREÇOS -->
+    <section class="section section--pricing" id="precos">
+      <div class="wrap">
+        <div class="head reveal">
+          <div>
+            <p class="chip mono"><i class="dot"></i>preços</p>
+            <h2 class="h-section">Preço pelo que <em>roda.</em> Equipe ilimitada.</h2>
+          </div>
+          <p class="head__aside">Convide a empresa inteira em qualquer plano. Ninguém precisa pedir licença pra automatizar o próprio trabalho.</p>
+        </div>
+
+        <div class="meter card reveal">
+          <div class="meter__main">
+            <p class="mono label">estimativa</p>
+            <label class="meter__q" for="runsRange">Quantas execuções você espera por mês?</label>
+            <div class="range">
+              <div class="range__fill" id="rangeFill"></div>
+              <input type="range" id="runsRange" min="0" max="1000" step="1" value="560" aria-describedby="runsOut" />
+            </div>
+            <div class="range__ticks mono"><span>1 mil</span><span id="runsOut" class="range__out">50.000</span><span>500 mil</span></div>
+          </div>
+          <div class="meter__side">
+            <p class="mono label">seu plano</p>
+            <p class="meter__plan" id="planName">Equipe</p>
+            <p class="meter__price"><span id="planPrice">R$ 449</span><small class="mono"> por mês</small></p>
+            <p class="mono muted small" id="planIncl">50.000 execuções incluídas</p>
+            <a class="btn btn--lime btn--block" href="#comecar">Começar grátis</a>
+          </div>
+        </div>
+
+        <div class="plans">
+          <article class="plan settle" data-plan="0">
+            <p class="mono label">Essencial</p>
+            <p class="plan__price">R$ 149</p>
+            <p class="mono muted small">por mês</p>
+            <ul>
+              <li>5.000 execuções por mês</li>
+              <li>10 fluxos</li>
+              <li>7 dias de histórico</li>
+              <li>suporte por e-mail</li>
+            </ul>
+            <a class="btn btn--ghost btn--block" href="#comecar">Começar grátis</a>
+          </article>
+          <article class="plan settle is-active" data-plan="1">
+            <p class="mono label">Equipe <span class="tag mono">mais escolhido</span></p>
+            <p class="plan__price">R$ 449</p>
+            <p class="mono muted small">por mês</p>
+            <ul>
+              <li>50.000 execuções por mês</li>
+              <li>fluxos ilimitados</li>
+              <li>90 dias de histórico</li>
+              <li>aprovações no Slack e etapas em código</li>
+            </ul>
+            <a class="btn btn--ghost btn--block" href="#comecar">Começar grátis</a>
+          </article>
+          <article class="plan settle" data-plan="2">
+            <p class="mono label">Escala</p>
+            <p class="plan__price">R$ 1.490</p>
+            <p class="mono muted small">por mês</p>
+            <ul>
+              <li>500.000 execuções por mês</li>
+              <li>SSO e log de auditoria</li>
+              <li>1 ano de histórico</li>
+              <li>engenheiro dedicado, resposta em 4 h</li>
+            </ul>
+            <a class="btn btn--ghost btn--block" href="#comecar">Falar com a gente</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="section section--final" id="comecar">
+      <div class="wrap final">
+        <div class="card final__brand reveal">
+          <div class="brand"><span class="brand__mark"><svg><use href="#glyph" /></svg></span><span class="brand__name">Elo</span></div>
+          <svg class="final__ghost" aria-hidden="true"><use href="#glyph" /></svg>
+          <p class="final__claim">Feito para o trabalho que ninguém vê, mas todo mundo precisa.</p>
+          <div class="final__row">
+            <span class="mono muted small">acompanhe</span>
+            <div class="socials mono"><a href="#" aria-label="LinkedIn">in</a><a href="#" aria-label="X">x</a><a href="#" aria-label="GitHub">gh</a><a href="#" aria-label="YouTube">yt</a></div>
+          </div>
+        </div>
+        <div class="final__cta reveal">
+          <p class="mono label">próximo passo</p>
+          <h2>Qual tarefa você <em>nunca mais</em> quer fazer?</h2>
+          <p>Mande um processo que hoje depende de copiar e colar. A gente monta o primeiro fluxo junto com você na primeira semana.</p>
+          <form class="signup" id="signup" novalidate>
+            <label class="sr-only" for="email">E-mail de trabalho</label>
+            <input id="email" type="email" placeholder="seu e-mail de trabalho" autocomplete="email" required />
+            <button class="btn btn--dark" type="submit">Quero testar</button>
+          </form>
+          <p class="signup__msg mono" id="signupMsg" role="status"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" id="rodape">
+    <div class="ticker mono" aria-hidden="true">
+      <div class="ticker__track">
+        <span><i class="dot"></i>todos os sistemas ok</span><span><i class="dot"></i>99,97% de disponibilidade nos últimos 90 dias</span><span><i class="dot"></i>3 regiões · seus dados não saem da sua</span>
+        <span><i class="dot"></i>todos os sistemas ok</span><span><i class="dot"></i>99,97% de disponibilidade nos últimos 90 dias</span><span><i class="dot"></i>3 regiões · seus dados não saem da sua</span>
+      </div>
+    </div>
+    <div class="wrap footer__grid">
+      <div>
+        <div class="brand"><span class="brand__mark"><svg><use href="#glyph" /></svg></span><span class="brand__name">Elo Tecnologia</span></div>
+        <p class="muted">Independente e focada em fazer o trabalho chato funcionar desde 2025.</p>
+        <p class="mono dim small">LGPD · SOC 2 tipo II · log de auditoria · residência de dados</p>
+      </div>
+      <nav class="footer__cols" aria-label="Rodapé">
+        <div><p class="mono label">produto</p><a href="#produto">Quadro</a><a href="#como-funciona">Integrações</a><a href="#painel">Histórico</a><a href="#precos">Preços</a></div>
+        <div><p class="mono label">aprender</p><a href="#">Documentação</a><a href="#">Modelos</a><a href="#">Novidades</a><a href="#">Status</a></div>
+        <div><p class="mono label">empresa</p><a href="#">Sobre</a><a href="#">Vagas</a><a href="#">Segurança</a><a href="#">Contato</a></div>
+        <div><p class="mono label">legal</p><a href="#">Privacidade</a><a href="#">Termos</a><a href="#">Cookies</a></div>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
